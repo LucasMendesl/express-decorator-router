@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "express-decorator-router",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "use decorators in a simple way without transpiling javascript code",
   "main": "src/index.js",
   "scripts": {
