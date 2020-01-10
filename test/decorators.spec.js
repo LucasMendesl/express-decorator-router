@@ -146,6 +146,14 @@ describe('express routing decorators', () => {
 			}).to.throw('a property anotherEndpoint doesn\'t exists in target object')
 		})
 
+		it('should throws error when decorate a method without pass a path in controller and http method', () => {
+			expect(() => {
+				decorators.controller()({ endpoint(){} }, {
+					endpoint: decorators.get()
+				})
+			}).to.throws('actionPath cannot be empty')
+		})
+
 		it('should add metadata when controller have an action post', () => {
 			const controller = decorators.controller('/my-new-controller')({
 				myNewFunction () { }
