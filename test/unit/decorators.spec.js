@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const chai = require('chai')
-const decorators = require('../src/decorators')
+const decorators = require('../../src/decorators')
 
 const { expect } = chai
 chai.config.includeStack = true
