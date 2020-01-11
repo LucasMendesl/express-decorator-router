@@ -1,1 +1,4 @@
-module.exports = require('./decorators')
+module.exports = {
+	useControllers: require('./register'),
+	...require('./decorators')
+}

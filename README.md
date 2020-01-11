@@ -74,7 +74,7 @@ In the example above, we create middleware to authenticate users and associate i
 
 ```js
 // only getTasks method requires authentication for access
-module.exports = controller ('/ tasks') ({getTasks, createTask}, {
+module.exports = controller ('/tasks') ({getTasks, createTask}, {
   getTasks: get (authExampleMiddleware),
   createTask: post ()
 })
@@ -90,17 +90,55 @@ module.exports = controller () ({
   getTasks,
   createTask
 }, {
-  getTasks: get ('/ tasks', middlewareTest), // after the path, it is possible to pass an array of middleware
-  createTask: post ('/ tasks', anotherMiddlewareTest)
+  getTasks: get ('/tasks', middlewareTest), // after the path, it is possible to pass an array of middleware
+  createTask: post ('/tasks', anotherMiddlewareTest)
 })
 ```
-Once the decorators are applied, every controller instance (being prototype or literal object based) will receive an array of routes, where the metadata of each route is defined, making it possible to dynamically assemble the routes. You can see a demo in the [example](https://github.com/LucasMendesl/express-decorator-router/tree/master/example) folder.
+Once the decorators are applied, every controller instance (being prototype or literal object based) will receive an array of routes, where the metadata of each route is defined, making it possible to dynamically assemble the routes.
+
+## Register Controllers
+
+Before putting the application to run, it is necessary to re-bind the controller methods to the routes using the metadata produced by the decorators. The [express-decorator-router](https://github.com/LucasMendesl/express-decorator-router) package has a feature that will automatically register express routes. Let's look at an example:
+
+```js
+
+const express         = require('express')
+const cors            = require('cors')
+const useControllers  = require('express-decorator-router/register')
+
+const app             = express()
+const router          = express.Router()
+
+app.use(cors())
+app.use(express.json())
+
+app.use('/api', useControllers({
+   router,
+   controllerExpression: `${__dirname}/**/controller.js`
+}))
+
+//or if you use middleware without route prefix
+app.use(useControllers({
+   router,
+   controllerExpression: `${__dirname}/**/controller.js`
+}))
+
+```
+
+The **useControllers** method uses two parameters, the first is the routing mechanism and the second is a [glob](https://github.com/isaacs/node-glob) expression that has the responsibility of finding all controllers that match the pattern of the expression.
+
+### Example
+
+You can see a demo in the [example](https://github.com/LucasMendesl/express-decorator-router/tree/master/example) folder.
+
 
 ### Decorators API
 
+* `register ({ routes: Function, controllerExpression: string  }): Function`
 * `controller (path: string, ...middlewares?:Function []): Function`
 * `route (method: string, methodPath: string, ...middlewares?:Function []): Function`
 * `head`, `options`, `get`, `post`, `put`, `patch`, `del`, `delete`, `all`: partial functions provided by the `route` method that automatically supply the `httpMethod` argument.
+
 
 ## Run Tests
 
