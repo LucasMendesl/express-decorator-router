@@ -102,9 +102,9 @@ Before putting the application to run, it is necessary to re-bind the controller
 
 ```js
 
-const express         = require('express')
-const cors            = require('cors')
-const useControllers  = require('express-decorator-router/register')
+const express             = require('express')
+const cors                = require('cors')
+const { useControllers }  = require('express-decorator-router')
 
 const app             = express()
 const router          = express.Router()

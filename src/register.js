@@ -18,9 +18,9 @@ const isPromise = obj => !!obj && (isObject(obj) || isFunction(obj)) && isFuncti
  * @returns This method returns a configured router object
  * @example
  *
- * const express          = require('express')
- * const cors             = require('cors')
- * const useControllers   = require('express-decorator-router/register')
+ * const express              = require('express')
+ * const cors                 = require('cors')
+ * const { useControllers }   = require('express-decorator-router')
  *
  * const app              = express()
  * const router           = express.Router()
@@ -59,7 +59,8 @@ module.exports = function useControllers (configuration = {}) {
 			? new ApplicationController()
 			: ApplicationController
 
-		return instance.$routes.reduce((server, {
+		const routes = instance.$routes || []
+		return routes.reduce((server, {
 			httpMethod,
 			endpointFn,
 			actionPath,
