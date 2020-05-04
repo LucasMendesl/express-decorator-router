@@ -1,16 +1,16 @@
-const { 
+const {
 	get,
 	put,
 	del,
 	post,
-	controller 
-} = require('../../src/decorators')
+	controller
+} = require('../../../src/decorators')
 
 const getTask = ctx => ctx.response.json({ 'message': 'get tasks' })
 
 const postTask = ctx => {
 	const { name } = ctx.request.body
-	return ctx.response.json({'message': `create task with name ${name}`})
+	return ctx.response.json({ 'message': `create task with name ${name}` })
 }
 
 const putTask = ctx => {

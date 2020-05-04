@@ -11,7 +11,7 @@ const noopMl2 = () => {}
 
 describe('express routing decorators', () => {
 	describe('controller and http methods decorators', () => {
-		class MyController { myMethod () { } }
+		class MyController { myMethod() {} }
 
 		it('should throw if controller receive non-string path', () => {
 			expect(() => {
@@ -30,18 +30,16 @@ describe('express routing decorators', () => {
 		it('should add route metadata in controller object', () => {
 			const Controller = decorators.controller()(class Ctrl {}, {})
 
-			const instance = new Controller()
-			expect(instance).has.property('$routes')
+			expect(Controller).has.property('$routes')
 		})
 
 		it('should concat rootPath when action has a child path', () => {
-			const Controller = decorators.controller('/test-controller')(
+			const instance = decorators.controller('/test-controller')(
 				MyController, {
 					myMethod: decorators.get('/:id')
 				}
 			)
 
-			const instance = new Controller()
 			expect(instance).to.have.property('$routes').with.lengthOf(1)
 			expect(instance.$routes).to.eql([{
 				httpMethod: 'get',
@@ -51,7 +49,7 @@ describe('express routing decorators', () => {
 			}])
 		})
 
-		it('should throws error when action decorator middleware receive non-function parameter', () => {
+		it('should throw error when action decorator middleware receive non-function parameter', () => {
 			expect(() => {
 				decorators.controller('/rootPath')({
 					myGetFn: noop
@@ -60,13 +58,12 @@ describe('express routing decorators', () => {
 		})
 
 		it('should normalize delete method', () => {
-			const Controller = decorators.controller('/my-controller')(
+			const instance = decorators.controller('/my-controller')(
 				MyController, {
 					myMethod: decorators.del()
 				}
 			)
 
-			const instance = new Controller()
 			expect(instance).to.have.property('$routes').with.lengthOf(1)
 			expect(instance.$routes).to.eql([{
 				httpMethod: 'delete',
@@ -78,8 +75,8 @@ describe('express routing decorators', () => {
 
 		it('should pass middleware function to controller decorator', () => {
 			const controller = decorators.controller('/literal-controller', noop)({
-				endpoint () {},
-				anotherEndpoint () {}
+				endpoint() {},
+				anotherEndpoint() {}
 			}, {
 				endpoint: decorators.put('/:id'),
 				anotherEndpoint: decorators.post('/post')
@@ -99,20 +96,17 @@ describe('express routing decorators', () => {
 			}])
 		})
 
-		it('should throws error when route decorator receive a invalid express router method', () => {
+		it('should throw error when controller target object is not a function or an object', () => {
 			expect(() => {
-				decorators.controller()(MyController, {
-					myMethod: decorators.route('test')
-				})
-			}).to.throw('method must be a valid express routing function')
+				decorators.controller('/rootPath')(1, { root: decorators.get() })
+			}).to.throw('target must be a function or object')
 		})
 
 		it('should add metadata when controller have an action get', () => {
-			const Controller = decorators.controller('/my-controller')(MyController, {
+			const instance = decorators.controller('/my-controller')(MyController, {
 				myMethod: decorators.get()
 			})
 
-			const instance = new Controller()
 			expect(instance).to.have.property('$routes').with.lengthOf(1)
 			expect(instance.$routes).to.eql([{
 				httpMethod: 'get',
@@ -124,7 +118,7 @@ describe('express routing decorators', () => {
 
 		it('should concat action middlewares with controller middlewares', () => {
 			const controller = decorators.controller('/my-controller', noop)({
-				endpoint () { }
+				endpoint() {}
 			}, {
 				endpoint: decorators.post(noopMl, noopMl2)
 			})
@@ -138,17 +132,17 @@ describe('express routing decorators', () => {
 			}])
 		})
 
-		it('should throws error when try to pass unexpected property to decorator handler', () => {
+		it('should throw error when try to pass unexpected property to decorator handler', () => {
 			expect(() => {
 				decorators.controller('/test')({}, {
 					anotherEndpoint: decorators.get()
 				})
-			}).to.throw('a property anotherEndpoint doesn\'t exists in target object')
+			}).to.throw('a property anotherEndpoint doesn\'t exist in target object')
 		})
 
-		it('should throws error when decorate a method without pass a path in controller and http method', () => {
+		it('should throw error when decorate a method without pass a path in controller and http method', () => {
 			expect(() => {
-				decorators.controller()({ endpoint(){} }, {
+				decorators.controller()({ endpoint() {} }, {
 					endpoint: decorators.get()
 				})
 			}).to.throws('actionPath cannot be empty')
@@ -156,7 +150,7 @@ describe('express routing decorators', () => {
 
 		it('should add metadata when controller have an action post', () => {
 			const controller = decorators.controller('/my-new-controller')({
-				myNewFunction () { }
+				myNewFunction() {}
 			}, {
 				myNewFunction: decorators.post()
 			})
@@ -171,3 +165,4 @@ describe('express routing decorators', () => {
 		})
 	})
 })
+

@@ -1,12 +1,98 @@
 const glob = require('glob')
 
 const {
+	isClass,
 	isObject,
 	isString,
-	isFunction
-} = require('util')
+	isPromise,
+	isFunction,
+} = require('./type-is')
 
-const isPromise = obj => !!obj && (isObject(obj) || isFunction(obj)) && isFunction(obj.then)
+const { createResolver } = require('./resolvers')
+
+const registerControllers = ({ router, controllerExpression }, handler, useAwilix) => {
+	if (!isObject(router) && !isFunction(router))
+		throw new TypeError('router must be a function or an object!')
+
+	if (!isString(controllerExpression))
+		throw new TypeError('controllerExpression must be a valid string!')
+
+	const requestHandler = fn => (...args) => {
+		const [request, response, next] = args
+		try {
+			const handler = useAwilix ? fn(...args) : fn({ request, response, next })
+
+			if (isPromise(handler)) handler.catch(next)
+
+		} catch (err) {
+			next(err)
+		}
+	}
+
+	const createControllerInstance = (router, handler) => file => {
+		const required = require(file)
+		const controller = required.default || required
+
+		const routes = controller.$routes || []
+		return routes.reduce((server, {
+			httpMethod,
+			endpointFn,
+			actionPath,
+			actionMiddlewares
+		}) => server[httpMethod](actionPath, ...actionMiddlewares, requestHandler(handler(controller, endpointFn))), router)
+	}
+
+	glob.sync(controllerExpression)
+		.forEach(createControllerInstance(router, handler))
+
+	return router
+}
+
+
+/**
+ * Responsible to register controllers into express router and resolves
+ * controller dependencies with awilix.
+ * This method uses glob pattern to search files on application.
+ *
+ * @param {Object}  configuration represents a configuration object
+ * @param  {Function} configuration.router represents a express router
+ * @param  {String} configuration.controllerExpression represents a glob expression to match controller files on application
+ * @returns This method returns a configured router object
+ * @example
+ *
+ * const express  = require('express')
+ * const cors     = require('cors')
+ * const service  = require('./my-service')
+ * const {
+ *    awilix,
+ *    scopePerRequest,
+ *    useAwilixControllers
+ * }  = require('express-decorator-router')
+ *
+ * const container        = awilix.createContainer()
+ *
+ * const app              = express()
+ * const router           = express.Router()
+ *
+ * container.register({
+ *    myService: awilix.asFunction(service).scoped()
+ * })
+ *
+ * app.use(cors())
+ * app.use(express.json())
+ * app.use(scopePerRequest(container))
+ * app.use('/api', useAwilixControllers({
+ *     router,
+ *     controllerExpression: `${__dirname}\**\controller.js`
+ * }))
+ *
+ */
+exports.useAwilixControllers = (configuration = {}) => {
+	const resolver = (controller, method) => createResolver(controller)(method)
+
+	return registerControllers(configuration, resolver, true)
+}
+
 
 /**
  * Responsible to register controllers into express router.
@@ -33,42 +119,12 @@ const isPromise = obj => !!obj && (isObject(obj) || isFunction(obj)) && isFuncti
  * }))
  *
  */
-module.exports = function useControllers (configuration = {}) {
-	if (!isObject(configuration.router) && !isFunction(configuration.router))
-		throw new TypeError('router must be a function or an object!')
+exports.useControllers = (configuration = {}) => {
 
-	if (!isString(configuration.controllerExpression))
-		throw new TypeError('controllerExpression must be a valid string!')
-
-	const requestHandler = fn => (...args) => {
-		const [request, response, next] = args
-		try {
-			const handler = fn({ request, response, next })
-
-			if (isPromise(handler)) handler.catch(next)
-
-		} catch (err) {
-			next(err)
-		}
+	const resolver = (controller, method) => {
+		const instance = isClass(controller) ? new controller() : controller
+		return instance[method].bind(instance)
 	}
 
-	const createControllerInstance = file => {
-		const ctrl = require(file)
-		const ApplicationController = ctrl.default || ctrl
-		const instance = ApplicationController.prototype
-			? new ApplicationController()
-			: ApplicationController
-
-		const routes = instance.$routes || []
-		return routes.reduce((server, {
-			httpMethod,
-			endpointFn,
-			actionPath,
-			actionMiddlewares
-		}) => server[httpMethod](actionPath, ...actionMiddlewares, requestHandler(instance[endpointFn].bind(instance))), configuration.router)
-	}
-
-	glob.sync(configuration.controllerExpression).map(createControllerInstance)
-
-	return configuration.router
+	return registerControllers(configuration, resolver, false)
 }
