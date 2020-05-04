@@ -57,7 +57,7 @@ const authExampleMiddleware = (req, res, next) => {
 const controllerFactoryDecorator = controller('/tasks', authExampleMiddleware)
 
 const getTasks = ctx => {/*...*/}
-const createTask => ctx {/*...*/}
+const createTask = ctx => {/*...*/}
 
 module.exports = controllerFactoryDecorator({
   getTasks,

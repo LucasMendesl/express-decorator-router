@@ -1,43 +1,58 @@
 {
-  "private": false,
-  "name": "express-decorator-router",
-  "version": "0.1.1",
-  "description": "use decorators in a simple way without transpiling javascript code",
-  "main": "src/index.js",
-  "scripts": {
-    "lint": "eslint src test",
-    "test": "mocha test/**/*.spec.js",
-    "coverage": "nyc --reporter=lcov --reporter=text npm run test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/LucasMendesl/express-decorator-router.git"
-  },
-  "keywords": [
-    "decorators",
-    "express",
-    "router",
-    "routing",
-    "es6"
-  ],
-  "author": "Lucas Mendes Loureiro <mendes.lucas9498@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/LucasMendesl/express-decorator-router/issues"
-  },
-  "homepage": "https://github.com/LucasMendesl/express-decorator-router#readme",
-  "dependencies": {
-    "glob": "^7.1.6"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^6.8.0",
-    "express": "^4.17.1",
-    "mocha": "^7.0.0",
-    "nyc": "^15.0.0",
-    "supertest": "^4.0.2"
-  },
-  "engines": {
-    "node": ">=8"
-  }
+    "private": false,
+    "name": "express-decorator-router",
+    "version": "0.1.1",
+    "description": "use decorators in a simple way without transpiling javascript code",
+    "main": "src/index.js",
+    "scripts": {
+        "lint": "eslint src test",
+        "test": "mocha test/**/*.spec.js",
+        "coverage": "nyc --reporter=lcov --reporter=text npm run test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/LucasMendesl/express-decorator-router.git"
+    },
+    "keywords": [
+        "decorators",
+        "express",
+        "router",
+        "routing",
+        "es6",
+        "without-transpiling",
+        "awilix",
+        "dependency-injection",
+        "IoC"
+    ],
+    "directories": {
+        "lib": "src"
+    },
+    "files": [
+        "src",
+        "LICENSE.md",
+        "README.md"
+    ],
+    "author": "Lucas Mendes Loureiro <mendes.lucas9498@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/LucasMendesl/express-decorator-router/issues"
+    },
+    "homepage": "https://github.com/LucasMendesl/express-decorator-router#readme",
+    "peerDependencies": {
+        "awilix": "^4.2.5",
+        "glob": "^7.1.6"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "eslint": "^6.8.0",
+        "express": "^4.17.1",
+        "husky": "^4.2.3",
+        "mocha": "^7.0.0",
+        "nyc": "^15.0.0",
+        "sinon": "^9.0.2",
+        "supertest": "^4.0.2"
+    },
+    "engines": {
+        "node": ">=8"
+    }
 }

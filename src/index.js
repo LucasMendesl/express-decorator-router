@@ -1,4 +1,7 @@
 module.exports = {
-	useControllers: require('./register'),
-	...require('./decorators')
+	...require('./register'),
+	...require('./resolvers'),
+	...require('./decorators'),
+	awilix: require('awilix'),
+	scopePerRequest: require('./scope-per-request'),
 }

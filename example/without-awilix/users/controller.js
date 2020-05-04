@@ -1,10 +1,10 @@
-const { 
+const {
 	get,
 	put,
 	del,
 	post,
-	controller 
-} = require('../../src/decorators')
+	controller
+} = require('../../../src/decorators')
 
 class UserController {
 
@@ -21,7 +21,7 @@ class UserController {
 		const { id } = ctx.request.params
 		const { user } = ctx.request.body
 		return ctx.response.json({ message: `update user with name ${user} with id ${id}` })
-	} 
+	}
 
 	deleteUser(ctx) {
 		const { id } = ctx.request.params
