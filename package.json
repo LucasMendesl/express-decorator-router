@@ -6,6 +6,7 @@
     "main": "src/index.js",
     "scripts": {
         "lint": "eslint src test",
+        "lint:fix": "eslint --fix src test",
         "test": "mocha test/**/*.spec.js",
         "coverage": "nyc --reporter=lcov --reporter=text npm run test"
     },
