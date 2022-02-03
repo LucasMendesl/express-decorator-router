@@ -1,4 +1,4 @@
-// Type definitions for express-decorator-router 0.2.0
+// Type definitions for express-decorator-router 0.2.1
 // Project: https://github.com/LucasMendesl/express-decorator-router/blob/master/README.md
 // Definitions by: Lucas Mendes Loureiro <https://github.com/LucasMendesl>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
@@ -13,7 +13,7 @@ declare namespace controllers {
 
     export const awilix: any
 
-    export type ResolverDepsFn = (...args?: any[]) => any
+    export type ResolverDepsFn = (...args?: any[]) => any | string
     export type RouteFn = (target: object, property: string) => void
     export type ControllerFn = (target: object, handler: object) => any
 
