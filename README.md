@@ -13,8 +13,11 @@ The [express-decorator-router](https://github.com/LucasMendesl/express-decorator
 This package is intended to avoid unnecessary creation of two files where one file contains the route definition and the other file has the function that handles the route request / response process, leaving simpler maintenance and more scalable code.
 
 ## Usage
+You can use [Awilix](https://github.com/jeffijoe/awilix) to effort and facilitate your Dependency Injection.
 
 Let's take a short example using the decorators on a prototype-based controller.
+
+**Without Awilix**
 
 ```js
 const {
@@ -36,6 +39,23 @@ module.exports = controllerFactoryDecorator(UsersController, {
   getUsers: get (),
   getUsersById: get ('/:id')
 })
+```
+
+**With Awilix**
+```js 
+const { get, controller, inject } = require('express-decorator-router')
+
+const getUsers = (req, res) => {
+	const { userService } = req
+	return res.json(userService.getUsers())
+}
+
+module.exports = controller('/users', inject('userService'))({
+	getUsers
+}, {
+	getUsers: get()
+})
+
 ```
 
 the controller function returns a high order function where the decorator definition is made by associating a decorator with a class method as seen in the example above.
@@ -64,7 +84,7 @@ module.exports = controllerFactoryDecorator({
   createTask
 }, {
   getTasks: get(),
-  createTask: post ()
+  createTask: post()
 })
 ```
 
@@ -100,6 +120,7 @@ Once the decorators are applied, every controller instance (being prototype or l
 
 Before putting the application to run, it is necessary to re-bind the controller methods to the routes using the metadata produced by the decorators. The [express-decorator-router](https://github.com/LucasMendesl/express-decorator-router) package has a feature that will automatically register express routes. Let's look at an example:
 
+**Withour Awilix**
 ```js
 
 const express             = require('express')
@@ -125,8 +146,38 @@ app.use(useControllers({
 
 ```
 
-The **useControllers** method uses two parameters, the first is the routing mechanism and the second is a [glob](https://github.com/isaacs/node-glob) expression that has the responsibility of finding all controllers that match the pattern of the expression.
+**With Awilix** 
+```js 
+const express = require('express')
+const taskService = require('./tasks/service')
+const userService = require('./users/service')
+const newsService = require('./news/service')
+const {
+  useAwilixControllers, 
+  awilix, 
+  scopePerRequest 
+} = require('express-decorator-router')
 
+const app = express()
+const router = express.Router()
+const container = awilix.createContainer()
+
+//registry your services
+container.register({
+	taskService: awilix.asValue(taskService).scoped(),
+	userService: awilix.asValue(userService).scoped(),
+	newsService: awilix.asValue(newsService).scoped()
+})
+
+app.use(express.json())
+app.use(scopePerRequest(container))
+
+app.use('/api/awilix', useAwilixControllers({
+	router,
+	controllerExpression: `${__dirname}/**/controller.js`
+}))
+```
+The **useControllers** and **useAwilixControllers** methods uses two parameters, the first is the routing mechanism and the second is a [glob](https://github.com/isaacs/node-glob) expression that has the responsibility of finding all controllers that match the pattern of the expression, the only difference between **useControllers** and **useAwilixControllers** is that the awilix require to use a container registration for your dependency injections.
 ### Example
 
 You can see a demo in the [example](https://github.com/LucasMendesl/express-decorator-router/tree/master/example) folder.
