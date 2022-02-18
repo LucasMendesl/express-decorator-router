@@ -21,3 +21,8 @@ npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older v
 [x]  sinon       ^9.0.2  →  ^13.0.1
 [x]  supertest   ^4.0.2  →   ^6.2.2
 ```
+
+```
+ eslint    ^8.8.0  →   ^8.9.0
+ express  ^4.17.2  →  ^4.17.3
+```
