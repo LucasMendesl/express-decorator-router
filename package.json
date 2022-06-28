@@ -39,8 +39,8 @@
     },
     "homepage": "https://github.com/LucasMendesl/express-decorator-router#readme",
     "peerDependencies": {
-        "awilix": "^6.1.0",
-        "glob": "^7.1.6"
+        "awilix": "^7.0.3",
+        "glob": "^8.0.3"
     },
     "devDependencies": {
         "chai": "^4.2.0",

@@ -13,13 +13,14 @@ declare namespace controllers {
 
     export const awilix: any
 
-    export type ResolverDepsFn = (...args?: any[]) => any | string
+    export type ResolverDepsFn = (...args: any[]) => any | string
     export type RouteFn = (target: object, property: string) => void
     export type ControllerFn = (target: object, handler: object) => any
 
     export type FactoryResolverFn =
       awilix.ClassOrFunctionReturning<any> |
-      awilix.Resolver<any>
+      awilix.Resolver<any> |
+      string
 
     interface RouterRequest extends express.Request {
         [container: string]: any
@@ -62,7 +63,7 @@ declare namespace controllers {
 
     export function useAwilixControllers(configuration?: RouterControllerConfig): express.RequestHandler;
 
-    export function controller(controllerPath?: string, ...middlewares?: express.RequestHandler[]): ControllerFn;
+    export function controller(controllerPath?: string, ...middlewares: express.RequestHandler[]): ControllerFn;
 }
 
 export = controllers
